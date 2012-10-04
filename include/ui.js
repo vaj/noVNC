@@ -49,7 +49,6 @@ start: function(callback) {
 
     // Keyboard type selection dropdown (temporarily)
     // This info should be directly got from the DB instead if possible.
-//    kbtypes = ['default', 'en-us', 'en-gb', 'de', 'ja'];
     kbtypes = ['default', 'ar', 'bepo', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi', 'fo', 'fr', 'fr-be', 'fr-ca', 'fr-ch', 'hr', 'hu', 'is', 'it', 'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt', 'pt-br', 'ru', 'sl', 'sv', 'th', 'tr'];
 
     for (i = 0; i < kbtypes.length; i += 1) {
@@ -76,7 +75,6 @@ start: function(callback) {
     UI.initSetting('cursor', false);
     UI.initSetting('shared', true);
     UI.initSetting('view_only', false);
-//    UI.initSetting('connectTimeout', 2);
     UI.initSetting('connectTimeout', 5);
     UI.initSetting('path', 'websockify');
     UI.initSetting('repeaterID', '');
