@@ -459,7 +459,7 @@ function onKeyPress(e) {
     }
     // Send the translated keysym
     if (conf.onKeyPress && (keysym > 0)) {
-        Util.Debug("onKeyPress down, keysym: " + keysym +
+        Util.Debug("onKeyPress down and up, keysym: " + keysym +
                    " (onKeyPress key: " + evt.keyCode +
                    ", which: " + evt.which + ")");
         conf.onKeyPress(keysym, 2, evt);
@@ -482,8 +482,8 @@ function onKeyUp(e) {
     if (fevt) {
         keysym = fevt.keysym;
     } else {
-        Util.Warn("Key event (keyCode = " + evt.keyCode +
-                ") not found on keyDownList");
+        //Util.Debug("Key event (keyCode = " + evt.keyCode +
+        //        ") not found on keyDownList");
         keysym = 0;
     }
     saveKeyModifiers(evt, keysym);
