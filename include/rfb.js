@@ -993,6 +993,10 @@ init_msg = function() {
         } else {
             updateState('normal', "Connected (unencrypted) to: " + fb_name);
         }
+
+        // Cancel ctrl/alt/shift/altgr keydown events that might be left.
+        that.clearKeymodifiers();
+
         break;
     }
     //Util.Debug("<< init_msg");
@@ -1899,6 +1903,7 @@ that.connect = function(host, port, password, path, kb) {
 
 that.disconnect = function() {
     //Util.Debug(">> disconnect");
+    that.clearKeymodifiers();
     updateState('disconnect', 'Disconnecting');
     //Util.Debug("<< disconnect");
 };
@@ -1921,6 +1926,20 @@ that.sendCtrlAltDel = function() {
     arr = arr.concat(keyEvent(0xFFE3, 0)); // Control
     arr = arr.concat(fbUpdateRequests());
     ws.send(arr);
+};
+
+that.clearKeymodifiers = function() {
+    if (rfb_state !== "normal") { return false; }
+    that.get_keyboard().refreshAllKeys();
+    Util.Info("Sending Ctrl/Alt/Shift/AltGr Keyup events");
+    var arr = [];
+    arr = arr.concat(keyEvent(0xFFEA, 0)); // AltGr
+    arr = arr.concat(keyEvent(0xFFE9, 0)); // Alt
+    arr = arr.concat(keyEvent(0xFFE3, 0)); // Control
+    arr = arr.concat(keyEvent(0xFFE1, 0)); // Shift
+    arr = arr.concat(fbUpdateRequests());
+    ws.send(arr);
+    remote_status = {shift: false, ctrl: false, alt: false, altgr: false};
 };
 
 // Send a key press. If 'down' is not specified then send a down key

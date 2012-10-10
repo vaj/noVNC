@@ -558,6 +558,8 @@ that.getKeyModifiers = function() {
     return keyModifiers;
 };
 
+that.refreshAllKeys = allKeysUp;
+
 return that;  // Return the public API interface
 
 }  // End of Keyboard()

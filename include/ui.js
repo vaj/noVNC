@@ -156,6 +156,7 @@ addMouseHandlers: function() {
     //$D("keyboardinput").onkeydown = function (event) { onKeyDown(event); };
     $D("keyboardinput").onblur = UI.keyInputBlur;
 
+    $D("sendResetButton").onclick = UI.sendReset;
     $D("sendCtrlAltDelButton").onclick = UI.sendCtrlAltDel;
     $D("clipboardButton").onclick = UI.toggleClipboardPanel;
     $D("settingsButton").onclick = UI.toggleSettingsPanel;
@@ -411,6 +412,10 @@ sendCtrlAltDel: function() {
     UI.rfb.sendCtrlAltDel();
 },
 
+sendReset: function() {
+    UI.rfb.clearKeymodifiers();
+},
+
 setMouseButton: function(num) {
     var b, blist = [0, 1,2,4], button;
 
@@ -506,11 +511,13 @@ updateVisualState: function() {
         $D('clipboardButton').style.display = "inline";
         $D('showKeyboard').style.display = "inline";
         $D('sendCtrlAltDelButton').style.display = "inline";
+        $D('sendResetButton').style.display = "inline";
     } else {
         UI.setMouseButton();
         $D('clipboardButton').style.display = "none";
         $D('showKeyboard').style.display = "none";
         $D('sendCtrlAltDelButton').style.display = "none";
+        $D('sendResetButton').style.display = "none";
     }
     // State change disables viewport dragging.
     // It is enabled (toggled) by direct click on the button
