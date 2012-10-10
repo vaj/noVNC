@@ -103,7 +103,7 @@
         }
 
         window.onscriptsload = function () {
-            var host, port, password, path, token;
+            var host, port, password, path, token, keyboard;
 
             $D('sendCtrlAltDelButton').style.display = "inline";
             $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
@@ -126,6 +126,8 @@
             password = WebUtil.getQueryVar('password', '');
             path = WebUtil.getQueryVar('path', 'websockify');
 
+            keyboard = WebUtil.getQueryVar('keyboard', null);
+
             if ((!host) || (!port)) {
                 updateState('failed',
                     "Must specify host and port in URL");
@@ -142,7 +144,7 @@
                            'view_only':    WebUtil.getQueryVar('view_only', false),
                            'updateState':  updateState,
                            'onPasswordRequired':  passwordRequired});
-            rfb.connect(host, port, password, path);
+            rfb.connect(host, port, password, path, keyboard);
         };
         </script>
 

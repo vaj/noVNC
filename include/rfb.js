@@ -1885,12 +1885,11 @@ that.connect = function(host, port, password, path, kb) {
     rfb_path       = (path !== undefined) ? path : "";
 
     remote_keyboard = keymaps[kb];
-    if (remote_keyboard === null) {
+    if (typeof remote_keyboard === 'undefined') {
+        remote_keyboard = null;
+    } else if (remote_keyboard === null) {
         return fail("keymap " + kb + " is loading...");
     }
-
-    if (typeof remote_keyboard === 'undefined')
-        remote_keyboard = null;
 
     if ((!rfb_host) || (!rfb_port)) {
         return fail("Must set host and port");
