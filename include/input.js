@@ -459,7 +459,10 @@ function onKeyPress(e) {
     }
     // Send the translated keysym
     if (conf.onKeyPress && (keysym > 0)) {
-        Util.Debug("onKeyPress down and up, keysym: " + keysym +
+        Util.Debug("onKeyPress down, keysym: " + keysym +
+                   " (onKeyPress key: " + evt.keyCode +
+                   ", which: " + evt.which + ")");
+        Util.Debug("onKeyPress up, keysym: " + keysym +
                    " (onKeyPress key: " + evt.keyCode +
                    ", which: " + evt.which + ")");
         conf.onKeyPress(keysym, 2, evt);
