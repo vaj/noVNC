@@ -52,10 +52,10 @@ start: function(callback) {
     kbtypes = ['default', 'ar', 'bepo', 'da', 'de', 'de-ch', 'en-gb', 'en-us', 'es', 'et', 'fi', 'fo', 'fr', 'fr-be', 'fr-ca', 'fr-ch', 'hr', 'hu', 'is', 'it', 'ja', 'lt', 'lv', 'mk', 'nl', 'nl-be', 'no', 'pl', 'pt', 'pt-br', 'ru', 'sl', 'sv', 'th', 'tr'];
 
     for (i = 0; i < kbtypes.length; i += 1) {
-        UI.addOption($D('noVNC_keyboard'), kbtypes[i], kbtypes[i]);
+        UI.addOption($D('noVNC_keymap'), kbtypes[i], kbtypes[i]);
     }
 
-    UI.initSetting('keyboard', 'default');
+    UI.initSetting('keymap', 'default');
 
     // Settings with immediate effects
     UI.initSetting('logging', 'warn');
@@ -83,7 +83,7 @@ start: function(callback) {
     UI.rfb = RFB({'target': $D('noVNC_canvas'),
                   'onUpdateState': UI.updateState,
                   'onClipboard': UI.clipReceive});
-    UI.rfb.init_keyboard(UI.getSetting('keyboard'));
+    UI.rfb.setKeymap(UI.getSetting('keymap'));
     UI.updateVisualState();
 
     // Unfocus clipboard when over the VNC area
@@ -340,7 +340,7 @@ toggleSettingsPanel: function() {
         UI.updateSetting('repeaterID');
         UI.updateSetting('stylesheet');
         UI.updateSetting('logging');
-        UI.updateSetting('keyboard');
+        UI.updateSetting('keymap');
 
         UI.openSettingsMenu();
     }
@@ -385,10 +385,10 @@ settingsApply: function() {
     UI.saveSetting('repeaterID');
     UI.saveSetting('stylesheet');
     UI.saveSetting('logging');
-    UI.saveSetting('keyboard');
+    UI.saveSetting('keymap');
 
     // Settings with immediate (non-connected related) effect
-    UI.rfb.init_keyboard(UI.getSetting('keyboard'));
+    UI.rfb.setKeymap(UI.getSetting('keymap'));
     WebUtil.selectStylesheet(UI.getSetting('stylesheet'));
     WebUtil.init_logging(UI.getSetting('logging'));
     UI.setViewClip();
@@ -570,7 +570,7 @@ connect: function() {
     UI.rfb.set_connectTimeout(UI.getSetting('connectTimeout'));
     UI.rfb.set_repeaterID(UI.getSetting('repeaterID'));
 
-    UI.rfb.connect(host, port, password, path, UI.getSetting('keyboard'));
+    UI.rfb.connect(host, port, password, path);
 
     //Close dialog.
     setTimeout(UI.setBarPosition, 100);

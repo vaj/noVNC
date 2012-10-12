@@ -44,7 +44,7 @@
 
         <script>
         /*jslint white: false */
-        /*global window, $, Util, RFB, */
+        /*global window, $, Util, RFB, Kmap */
         "use strict";
 
         // Load supporting scripts
@@ -103,7 +103,7 @@
         }
 
         window.onscriptsload = function () {
-            var host, port, password, path, token, keyboard;
+            var host, port, password, path, token, keymap;
 
             $D('sendCtrlAltDelButton').style.display = "inline";
             $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
@@ -126,13 +126,14 @@
             password = WebUtil.getQueryVar('password', '');
             path = WebUtil.getQueryVar('path', 'websockify');
 
-            keyboard = WebUtil.getQueryVar('keyboard', null);
-
             if ((!host) || (!port)) {
                 updateState('failed',
                     "Must specify host and port in URL");
                 return;
             }
+
+            keymap = WebUtil.getQueryVar('keymap', 'default');
+            Kmap.loadKeymap(keymap);
 
             rfb = new RFB({'target':       $D('noVNC_canvas'),
                            'encrypt':      WebUtil.getQueryVar('encrypt',
@@ -144,7 +145,8 @@
                            'view_only':    WebUtil.getQueryVar('view_only', false),
                            'updateState':  updateState,
                            'onPasswordRequired':  passwordRequired});
-            rfb.connect(host, port, password, path, keyboard);
+            rfb.setKeymap(keymap);
+            rfb.connect(host, port, password, path);
         };
         </script>
 

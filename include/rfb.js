@@ -596,22 +596,21 @@ checkEvents = function() {
     setTimeout(checkEvents, conf.check_rate);
 };
 
-// Keyboard type the vnc server uses.
-var remote_keyboard = null;
 // The status of the VNC server side key modifers.
 var remote_status = {shift: false, ctrl: false, alt: false, altgr: false};
 
 keyPress = function(keysym, down) {
     var arr = [];
     var km;
+    var keymap = getKeymap();
 
     if (conf.view_only) { return; } // View only, skip keyboard events
 
     km = keyboard.getKeyModifiers();
     // Remap the modifiers with apppropriate ones depending on the
     // keyboard type of the vnc server if this is a presskey event.
-    if (remote_keyboard && down === 2)
-        km = remapModifiers(km, keysym);
+    if (!!keymap && down === 2)
+        km = remapModifiers(km, keysym, keymap);
 
     // Generate all modifier keys' events on demand.
     // Send key events for modifiers to the vnc server when:
@@ -653,7 +652,7 @@ keyPress = function(keysym, down) {
         arr = arr.concat(keyEvent(keysym, down));
     }
 
-    if (remote_keyboard && down === 2) {
+    if (!!keymap && down === 2) {
         // Turn off SHIFT and ALTGR every time when emulating modifiers.
         if (remote_status.shift) {
             arr = arr.concat(keyEvent(0xFFE1, 0));		// SHIFT up
@@ -678,17 +677,21 @@ keyPress = function(keysym, down) {
 // if needed. But unfortunately there are a lot of VNC servers that can't
 // handle this. Then there is no choice but to make noVNC take care of it
 // on behalf of them.
-function remapModifiers(km, keysym)
+function remapModifiers(km, keysym, keymap)
 {
     var remap = {'altKey': km.altKey, 'ctrlKey': km.ctrlKey,
                  'shiftKey': km.shiftKey, 'altgrKey': km.altgrKey};
-    var key = remote_keyboard[keysym];
+    var key = keymap[keysym];
     if (typeof key !== "undefined") {
         remap.altgrKey = key.altgr;
         remap.shiftKey = key.shift;
     }
     return remap;
 }
+
+function getKeymap() {
+    return Kmap.getKeymap(that.current_keymap);
+};
 
 mouseButton = function(x, y, down, bmask) {
     if (down) {
@@ -1860,36 +1863,19 @@ clientCutText = function(text) {
     return arr;
 };
 
-var keymaps = {};
-function keymaploaded() {
-    var kb = this.info.split(".")[0];
-    kb = "keymaps['" + kb + "'] = keymap_" + kb;
-    try {
-      eval(kb);
-    } catch (e) {
-      delete keymaps[kb];
-    }
-}
-
 
 //
 // Public API interface functions
 //
 
-that.connect = function(host, port, password, path, kb) {
+//that.connect = function(host, port, password, path, kb) {
+that.connect = function(host, port, password, path) {
     //Util.Debug(">> connect");
 
     rfb_host       = host;
     rfb_port       = port;
     rfb_password   = (password !== undefined)   ? password : "";
     rfb_path       = (path !== undefined) ? path : "";
-
-    remote_keyboard = keymaps[kb];
-    if (typeof remote_keyboard === 'undefined') {
-        remote_keyboard = null;
-    } else if (remote_keyboard === null) {
-        return fail("keymap " + kb + " is loading...");
-    }
 
     if ((!rfb_host) || (!rfb_port)) {
         return fail("Must set host and port");
@@ -1980,11 +1966,14 @@ that.testMode = function(override_send, data_mode) {
         };
 };
 
-that.init_keyboard = function(kb) {
-    if (kb === 'default' || typeof keymaps[kb] !== 'undefined')
-        return;
-    keymaps[kb] = null;		// Now loading
-    load_scripts(get_INCLUDE_URI() + "keymaps/", [kb + ".js"], keymaploaded);
+that.current_keymap = null;
+that.setKeymap = function(kb) {
+    if (!kb || kb === 'default') {
+        that.current_keymap = null;
+    } else {
+        Kmap.loadKeymap(kb);	// lazy loading
+        that.current_keymap = kb;
+    }
 };
 
 return constructor();  // Return the public API interface
