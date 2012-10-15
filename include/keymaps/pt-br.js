@@ -1,4 +1,4 @@
-keymap_pt-br = {
+keymap_pt_br = {
 65105: { shift: false, altgr: false, name: "dead_acute" },
 60: { shift: true, altgr: false, name: "less" },
 36: { shift: true, altgr: false, name: "dollar" },

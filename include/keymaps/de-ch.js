@@ -1,4 +1,4 @@
-keymap_de-ch = {
+keymap_de_ch = {
 228: { shift: false, altgr: false, name: "adiaeresis" },
 65105: { shift: false, altgr: true, name: "dead_acute" },
 60: { shift: false, altgr: false, name: "less" },

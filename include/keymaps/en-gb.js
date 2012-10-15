@@ -1,4 +1,4 @@
-keymap_en-gb = {
+keymap_en_gb = {
 177: { shift: true, altgr: true, name: "plusminus" },
 65105: { shift: false, altgr: true, name: "dead_acute" },
 60: { shift: true, altgr: false, name: "less" },

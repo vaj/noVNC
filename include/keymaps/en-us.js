@@ -1,4 +1,4 @@
-keymap_en-us = {
+keymap_en_us = {
 60: { shift: true, altgr: false, name: "less" },
 36: { shift: true, altgr: false, name: "dollar" },
 65509: { shift: false, altgr: false, name: "Caps_Lock" },

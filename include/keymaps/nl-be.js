@@ -1,4 +1,4 @@
-keymap_nl-be = {
+keymap_nl_be = {
 60: { shift: false, altgr: false, name: "less" },
 65509: { shift: false, altgr: false, name: "Caps_Lock" },
 65464: { shift: false, altgr: false, name: "KP_8" },

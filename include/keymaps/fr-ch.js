@@ -1,4 +1,4 @@
-keymap_fr-ch = {
+keymap_fr_ch = {
 177: { shift: true, altgr: true, name: "plusminus" },
 228: { shift: false, altgr: false, name: "adiaeresis" },
 65105: { shift: false, altgr: false, name: "dead_acute" },

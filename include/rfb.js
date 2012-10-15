@@ -1868,7 +1868,6 @@ clientCutText = function(text) {
 // Public API interface functions
 //
 
-//that.connect = function(host, port, password, path, kb) {
 that.connect = function(host, port, password, path) {
     //Util.Debug(">> connect");
 

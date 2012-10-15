@@ -24,9 +24,10 @@ Kmap.loadKeymap = function (kb) {
         function () {
             var kb = this.src.split("/");
             kb = kb[kb.length -1].split(".")[0];
-            kb = "Kmap.keymaps['" + kb + "'] = keymap_" + kb;
+            var km = kb.replace(/[\-\+]/,"_");
+            km = "Kmap.keymaps['" + kb + "'] = keymap_" + km;
             try {
-                eval(kb);
+                eval(km);
             } catch (e) {
                 delete Kmap.keymaps[kb];
             }
