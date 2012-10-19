@@ -627,8 +627,8 @@ keyPress = function(keysym, down) {
         remote_status.alt = km.altKey;
     }
     if (remote_status.altgr !== km.altgrKey
-            || (keysym === 0xFFEA && remote_status.altgr && km.altgrKey)) {
-        arr = arr.concat(keyEvent(0xFFEA, km.altgrKey));	// ALTGR
+            || (keysym === 0xFE03 && remote_status.altgr && km.altgrKey)) {
+        arr = arr.concat(keyEvent(0xFE03, km.altgrKey));	// ALTGR
         remote_status.altgr = km.altgrKey;
     }
     if (remote_status.shift !== km.shiftKey
@@ -638,7 +638,7 @@ keyPress = function(keysym, down) {
     }
 
     if (keysym === 0xFFE1 || keysym === 0xFFE3
-                || keysym === 0xFFE9 || keysym === 0xFFEA) {
+                || keysym === 0xFFE9 || keysym === 0xFE03) {
         // SHIFT, CTRL, ALT and ALTGR events are already set in arr[].
     } else if (down === 2) {
         // This is a keypress event.
@@ -659,7 +659,7 @@ keyPress = function(keysym, down) {
             remote_status.shift = false;
         }
         if (remote_status.altgr) {
-            arr = arr.concat(keyEvent(0xFFEA, 0));		// ALTGR up
+            arr = arr.concat(keyEvent(0xFE03, 0));		// ALTGR up
             remote_status.altgr = false;
         }
     }
@@ -1917,7 +1917,7 @@ that.clearKeymodifiers = function() {
     that.get_keyboard().refreshAllKeys();
     Util.Info("Sending Ctrl/Alt/Shift/AltGr Keyup events");
     var arr = [];
-    arr = arr.concat(keyEvent(0xFFEA, 0)); // AltGr
+    arr = arr.concat(keyEvent(0xFE03, 0)); // AltGr
     arr = arr.concat(keyEvent(0xFFE9, 0)); // Alt
     arr = arr.concat(keyEvent(0xFFE3, 0)); // Control
     arr = arr.concat(keyEvent(0xFFE1, 0)); // Shift

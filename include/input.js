@@ -298,7 +298,7 @@ function saveKeyModifiers(evt, keysym) {
             default     :
                 switch (keysym) {
                     case 0xFFE1 : km.shiftKey = true; break;
-                    case 0xFFEA : km.altgrKey_native = true; break;
+                    case 0xFE03 : km.altgrKey_native = true; break;
                 }
                 km.altKey = evt.altKey;
                 km.ctrlKey = evt.ctrlKey;
@@ -322,7 +322,7 @@ function saveKeyModifiers(evt, keysym) {
             default     :
                 switch (keysym) {
                     case 0xFFE1 : km.shiftKey = false; break;
-                    case 0xFFEA : km.altgrKey_native = false; break;
+                    case 0xFE03 : km.altgrKey_native = false; break;
                 }
                 km.altKey = evt.altKey;
                 km.ctrlKey = evt.ctrlKey;
