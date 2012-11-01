@@ -228,6 +228,8 @@ Util.load_scripts = function(files) {
         script.src = Util.get_include_uri() + files[f];
         //console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
+            if (!this.onreadystatechange)
+                return;
             while (ls.length > 0 && (ls[0].readyState === 'loaded' ||
                                      ls[0].readyState === 'complete')) {
                 // For IE, append the script to trigger execution
