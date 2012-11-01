@@ -219,13 +219,15 @@ Util.get_include_uri = function() {
 }
 Util._loading_scripts = [];
 Util._pending_scripts = [];
-Util.load_scripts = function(files) {
+Util.load_scripts = function(files, callback) {
     var head = document.getElementsByTagName('head')[0], script,
         ls = Util._loading_scripts, ps = Util._pending_scripts;
     for (var f=0; f<files.length; f++) {
         script = document.createElement('script');
         script.type = 'text/javascript';
         script.src = Util.get_include_uri() + files[f];
+        if (!!callback)
+            script.callback = callback;
         //console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
             if (!this.onreadystatechange)
@@ -244,10 +246,14 @@ Util.load_scripts = function(files) {
                     this.onload = this.onreadystatechange = null;
                     //console.log("completed script: " + this.src);
                     ps.splice(ps.indexOf(this), 1);
+                    if (!!this.callback)
+                        this.callback();
 
                     // Call window.onscriptsload after last script loads
                     if (ps.length === 0 && window.onscriptsload) {
-                        window.onscriptsload();
+                        var f = window.onscriptsload;
+                        window.onscriptsload = null;
+                        f();
                     }
                 }
             }

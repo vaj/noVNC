@@ -20,7 +20,7 @@ Kmap.loadKeymap = function (kb) {
     if (!kb || kb === 'default' || typeof Kmap.keymaps[kb] !== 'undefined')
         return;
     Kmap.keymaps[kb] = null;		// Now loading
-    load_scripts(get_INCLUDE_URI() + "keymaps/", [kb + ".js"],
+    Util.load_scripts(["keymaps/" + kb + ".js"],
         function () {
             var kb = this.src.split("/");
             kb = kb[kb.length -1].split(".")[0];
