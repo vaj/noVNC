@@ -251,9 +251,9 @@ Util.load_scripts = function(files, callback) {
 
                     // Call window.onscriptsload after last script loads
                     if (ps.length === 0 && window.onscriptsload) {
-                        var f = window.onscriptsload;
+                        var onload = window.onscriptsload;
                         window.onscriptsload = null;
-                        f();
+                        onload();
                     }
                 }
             }

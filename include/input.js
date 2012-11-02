@@ -411,7 +411,7 @@ function onKeyDown(e) {
             Util.Debug("onKeyPress down, keysym: " + keysym +
                    " (onKeyDown key: " + evt.keyCode +
                    ", which: " + evt.which + ")");
-            conf.onKeyPress(keysym, 1, evt);
+            conf.onKeyPress(keysym, 1, keyModifiers);
             pushKeyEvent(fevt);
         }
         suppress = true;
@@ -465,7 +465,7 @@ function onKeyPress(e) {
         Util.Debug("onKeyPress up, keysym: " + keysym +
                    " (onKeyPress key: " + evt.keyCode +
                    ", which: " + evt.which + ")");
-        conf.onKeyPress(keysym, 2, evt);
+        conf.onKeyPress(keysym, 2, keyModifiers);
     }
 
     // Stop keypress events just in case
@@ -499,7 +499,7 @@ function onKeyUp(e) {
         Util.Debug("onKeyPress up, keysym: " + keysym +
                    " (onKeyPress key: " + evt.keyCode +
                    ", which: " + evt.which + ")");
-        conf.onKeyPress(keysym, 0, evt);
+        conf.onKeyPress(keysym, 0, keyModifiers);
     }
     Util.stopEvent(e);
     return false;
@@ -517,7 +517,7 @@ function allKeysUp() {
             Util.Debug("allKeysUp, keysym: " + keysym +
                     " (keyCode: " + fevt.keyCode +
                     ", which: " + fevt.which + ")");
-            conf.onKeyPress(keysym, 0, fevt);
+            conf.onKeyPress(keysym, 0, keyModifiers);
         }
     }
     Util.Debug("<< Keyboard.allKeysUp");
@@ -555,10 +555,6 @@ that.ungrab = function() {
     allKeysUp();
 
     //Util.Debug(">> Keyboard.ungrab");
-};
-
-that.getKeyModifiers = function() {
-    return keyModifiers;
 };
 
 that.refreshAllKeys = allKeysUp;

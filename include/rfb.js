@@ -599,14 +599,12 @@ checkEvents = function() {
 // The status of the VNC server side key modifers.
 var remote_status = {shift: false, ctrl: false, alt: false, altgr: false};
 
-keyPress = function(keysym, down) {
+keyPress = function(keysym, down, km) {
     var arr = [];
-    var km;
     var keymap = getKeymap();
 
     if (conf.view_only) { return; } // View only, skip keyboard events
 
-    km = keyboard.getKeyModifiers();
     // Remap the modifiers with apppropriate ones depending on the
     // keyboard type of the vnc server if this is a presskey event.
     if (!!keymap && down === 2)
