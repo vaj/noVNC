@@ -1,16 +1,11 @@
 /*
  * noVNC: HTML5 VNC client
- * Copyright (C) 2012 Joel Martin
- * Licensed under LGPL-3 (see LICENSE.txt)
- *
- * See README.md for usage and integration instructions.
- *
- * TIGHT decoder portion:
- * (c) 2012 Michael Tinglof, Joe Balaz, Les Piech (Mercuri.ca)
+ * Copyright (C) 2012 Hirokazu Takahashi
+ * Licensed under MPL 2.0 or any later version (see LICENSE.txt)
  */
 
-/*jslint white: false, browser: true, bitwise: false, plusplus: false */
-/*global window, get_INCLUDE_URI, load_scripts */
+/*jslint browser: true, white: false, bitwise: false */
+/*global Util */
 
 
 var Kmap = {};
