@@ -25,7 +25,18 @@
             <div id="noVNC_status_bar" class="noVNC_status_bar" style="margin-top: 0px;">
                 <table border=0 width="100%"><tr>
                     <td><div id="noVNC_status">Loading</div></td>
-                    <td width="350pt"><div id="noVNC_buttons">
+                    <td width="430pt"><div id="noVNC_buttons">
+                      <span style="float: right">
+                           &nbsp;&nbsp; Hit:
+                        <select name="softkey" id="softKeyMenu">
+                          <option value="tilde">tilde (~)</option>
+                          <option value="caret">caret (^) circum</option>
+                          <option value="backquote">backquote (`)</option>
+                          <option value="backslash">backslash (\)</option>
+                          <option value="yen">yen (¥)</option>
+                          <option value="eurosign">eurosign (€)</option>
+                        </select>
+                      </span>
                       <span style="float: right">
                         <input type=button value="Refresh Keyboard"
                             id="sendResetButton">
@@ -77,11 +88,12 @@
             return false;
         }
         function updateState(rfb, state, oldstate, msg) {
-            var s, sb, cad, rst, level;
+            var s, sb, cad, rst, skey, level;
             s = $D('noVNC_status');
             sb = $D('noVNC_status_bar');
             cad = $D('sendCtrlAltDelButton');
             rst = $D('sendResetButton');
+            skey = $D('softKeyMenu');
             switch (state) {
                 case 'failed':       level = "error";  break;
                 case 'fatal':        level = "error";  break;
@@ -93,8 +105,10 @@
 
             if (state === "normal") {
                 cad.disabled = false; rst.disabled = false;
+                skey.disabled = false;
             } else {
                 cad.disabled = true; rst.disabled = true;
+                skey.disabled = true;
             }
 
             if (typeof(msg) !== 'undefined') {
@@ -110,9 +124,15 @@
             $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
             $D('sendResetButton').style.display = "inline";
             $D('sendResetButton').onclick = sendReset;
+            $D('softKeyMenu').style.display = "inline";
+            $D('softKeyMenu').onclick = function() {
+                var e = $D('softKeyMenu');
+                var keyname = e.options[e.selectedIndex].value;
+                rfb.sendSoftKey(keyname);
+                return false;
+            };
 
-//            WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
-            WebUtil.init_logging(WebUtil.getQueryVar('logging', 'debug'));
+            WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
             document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
             // By default, use the host and port of server that served this file
             host = WebUtil.getQueryVar('host', window.location.hostname);
