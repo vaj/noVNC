@@ -1934,11 +1934,47 @@ that.sendKey = function(code, down) {
         arr = arr.concat(keyEvent(code, down ? 1 : 0));
     } else {
         Util.Info("Sending key code (down + up): " + code);
+        var km = {shift: false, ctrl: false, alt: false, altgr: false};
+        var keymap = getKeymap();
+        if (keymap)
+            km = remapModifiers(km, code, keymap);
+
+        if (remote_status.altgr !== km.altgrKey) {
+            arr = arr.concat(keyEvent(0xFE03, km.altgrKey));	// ALTGR
+            remote_status.altgr = km.altgrKey;
+        }
+        if (remote_status.shift !== km.shiftKey) {
+            arr = arr.concat(keyEvent(0xFFE1, km.shiftKey));	// SHIFT
+            remote_status.shift = km.shiftKey;
+        }
+
         arr = arr.concat(keyEvent(code, 1));
         arr = arr.concat(keyEvent(code, 0));
+
+        if (remote_status.shift) {
+            arr = arr.concat(keyEvent(0xFFE1, 0));		// SHIFT up
+            remote_status.shift = false;
+        }
+        if (remote_status.altgr) {
+            arr = arr.concat(keyEvent(0xFE03, 0));		// ALTGR up
+            remote_status.altgr = false;
+        }
     }
     arr = arr.concat(fbUpdateRequests());
     ws.send(arr);
+};
+
+that.sendSoftKey = function(keyname) {
+    var keysym = null;
+    switch (keyname) {
+        case 'backslash':    keysym = 92;   break;
+        case 'caret':        keysym = 94;   break;
+        case 'backquote':    keysym = 96;   break;
+        case 'tilde':        keysym = 126;  break;
+        case 'yen':          keysym = 165;  break;
+        case 'eurosign':     keysym = 8364; break;
+    }
+    if (keysym) that.sendKey(keysym);
 };
 
 that.clipboardPasteFrom = function(text) {
