@@ -25,9 +25,15 @@
             <div id="noVNC_status_bar" class="noVNC_status_bar" style="margin-top: 0px;">
                 <table border=0 width="100%"><tr>
                     <td><div id="noVNC_status">Loading</div></td>
-                    <td width="1%"><div id="noVNC_buttons">
+                    <td width="350pt"><div id="noVNC_buttons">
+                      <span style="float: right">
+                        <input type=button value="Refresh Keyboard"
+                            id="sendResetButton">
+                      </span>
+                      <span style="float: right">
                         <input type=button value="Send CtrlAltDel"
                             id="sendCtrlAltDelButton">
+                      </span>
                             </div></td>
                 </tr></table>
             </div>
@@ -66,11 +72,16 @@
             rfb.sendCtrlAltDel();
             return false;
         }
+        function sendReset() {
+            rfb.clearKeymodifiers();
+            return false;
+        }
         function updateState(rfb, state, oldstate, msg) {
-            var s, sb, cad, level;
+            var s, sb, cad, rst, level;
             s = $D('noVNC_status');
             sb = $D('noVNC_status_bar');
             cad = $D('sendCtrlAltDelButton');
+            rst = $D('sendResetButton');
             switch (state) {
                 case 'failed':       level = "error";  break;
                 case 'fatal':        level = "error";  break;
@@ -80,8 +91,11 @@
                 default:             level = "warn";   break;
             }
 
-            if (state === "normal") { cad.disabled = false; }
-            else                    { cad.disabled = true; }
+            if (state === "normal") {
+                cad.disabled = false; rst.disabled = false;
+            } else {
+                cad.disabled = true; rst.disabled = true;
+            }
 
             if (typeof(msg) !== 'undefined') {
                 sb.setAttribute("class", "noVNC_status_" + level);
@@ -94,6 +108,8 @@
 
             $D('sendCtrlAltDelButton').style.display = "inline";
             $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
+            $D('sendResetButton').style.display = "inline";
+            $D('sendResetButton').onclick = sendReset;
 
             WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
             document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
