@@ -38,12 +38,13 @@
 
         <script>
         /*jslint white: false */
-        /*global window, $, Util, RFB, */
+        /*global window, $, Util, RFB, Kmap */
         "use strict";
 
         // Load supporting scripts
         Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
-                           "input.js", "display.js", "jsunzip.js", "rfb.js"]);
+                           "input.js", "display.js", "jsunzip.js", "rfb.js",
+                           "keymap.js"]);
 
         var rfb;
 
@@ -89,7 +90,7 @@
         }
 
         window.onscriptsload = function () {
-            var host, port, password, path, token;
+            var host, port, password, path, token, keymap;
 
             $D('sendCtrlAltDelButton').style.display = "inline";
             $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
@@ -116,6 +117,9 @@
                 return;
             }
 
+            keymap = WebUtil.getQueryVar('keymap', 'default');
+            Kmap.loadKeymap(keymap);
+
             rfb = new RFB({'target':       $D('noVNC_canvas'),
                            'encrypt':      WebUtil.getQueryVar('encrypt',
                                     (window.location.protocol === "https:")),
@@ -126,6 +130,7 @@
                            'view_only':    WebUtil.getQueryVar('view_only', false),
                            'updateState':  updateState,
                            'onPasswordRequired':  passwordRequired});
+            rfb.setKeymap(keymap);
             rfb.connect(host, port, password, path);
         };
         </script>
