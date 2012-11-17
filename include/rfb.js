@@ -598,6 +598,7 @@ checkEvents = function() {
 
 // The status of the VNC server side key modifers.
 var remote_status = {shift: false, ctrl: false, alt: false, altgr: false};
+var softKeyState = {ctrlKey: false, altKey: false};
 
 keyPress = function(keysym, down, km) {
     var arr = [];
@@ -614,15 +615,17 @@ keyPress = function(keysym, down, km) {
     // Send key events for modifiers to the vnc server when:
     //  1. the status of modifers have been changed
     //  2. this is a repeated keydown event for a modifer
-    if (remote_status.ctrl !== km.ctrlKey
-            || (keysym === 0xFFE3 && remote_status.ctrl && km.ctrlKey)) {
-        arr = arr.concat(keyEvent(0xFFE3, km.ctrlKey));		// CTRL
-        remote_status.ctrl = km.ctrlKey;
+    var ctrlKey = km.ctrlKey || softKeyState.ctrlKey;
+    var altKey = km.altKey || softKeyState.altKey;
+    if (remote_status.ctrl !== ctrlKey
+            || (keysym === 0xFFE3 && remote_status.ctrl && ctrlKey)) {
+        arr = arr.concat(keyEvent(0xFFE3, ctrlKey));		// CTRL
+        remote_status.ctrl = ctrlKey;
     }
-    if (remote_status.alt !== km.altKey
-            || (keysym === 0xFFE9 && remote_status.alt && km.altKey)) {
-        arr = arr.concat(keyEvent(0xFFE9, km.altKey));		// ALT
-        remote_status.alt = km.altKey;
+    if (remote_status.alt !== altKey
+            || (keysym === 0xFFE9 && remote_status.alt && altKey)) {
+        arr = arr.concat(keyEvent(0xFFE9, altKey));		// ALT
+        remote_status.alt = altKey;
     }
     if (remote_status.altgr !== km.altgrKey
             || (keysym === 0xFE03 && remote_status.altgr && km.altgrKey)) {
@@ -1953,6 +1956,10 @@ that.sendSoftKey = function(keyname) {
         case 'eurosign':     keysym = 8364; break;
     }
     if (keysym) keyPress(keysym, 2, km);
+};
+
+that.updateSoftKeyState = function(name, value) {
+    softKeyState[name] = value;
 };
 
 that.clipboardPasteFrom = function(text) {

@@ -25,7 +25,7 @@
             <div id="noVNC_status_bar" class="noVNC_status_bar" style="margin-top: 0px;">
                 <table border=0 width="100%"><tr>
                     <td><div id="noVNC_status">Loading</div></td>
-                    <td width="430pt"><div id="noVNC_buttons">
+                    <td width="600pt"><div id="noVNC_buttons">
                       <span style="float: right">
                            &nbsp;&nbsp; Hit:
                         <select name="softkey" id="softKeyMenu">
@@ -36,6 +36,14 @@
                           <option value="yen">yen (&yen;)</option>
                           <option value="eurosign">eurosign (&euro;)</option>
                         </select>
+                      </span>
+                      <span style="float: right">
+                        <input type=checkbox value="ctrlKey"
+                            id="ctrlLockCheckBox">
+                        <label for="ctrlLockCheckBox">CtrlLock</label>
+                        <input type=checkbox value="altKey"
+                            id="altLockCheckBox">
+                        <label for="altLockCheckBox">AltLock</label>
                       </span>
                       <span style="float: right">
                         <input type=button value="Refresh Keyboard"
@@ -65,6 +73,19 @@
 
         var rfb;
 
+        var buttons = [
+            {name: 'ctrlLockCheckBox', onclick: updateSoftKeyState},
+            {name: 'altLockCheckBox', onclick: updateSoftKeyState},
+            {name: 'softKeyMenu', onclick: function() {
+                var e = $D('softKeyMenu');
+                var keyname = e.options[e.selectedIndex].value;
+                rfb.sendSoftKey(keyname);
+                return false;
+            }},
+            {name: 'sendResetButton', onclick: sendReset},
+            {name: 'sendCtrlAltDelButton', onclick: sendCtrlAltDel}
+        ];
+
         function passwordRequired(rfb) {
             var msg;
             msg = '<form onsubmit="return setPassword();"';
@@ -87,13 +108,14 @@
             rfb.clearKeymodifiers();
             return false;
         }
+        function updateSoftKeyState() {
+            rfb.updateSoftKeyState(this.value, this.checked);
+            return true;
+        }
         function updateState(rfb, state, oldstate, msg) {
-            var s, sb, cad, rst, skey, level;
+            var s, sb, level;
             s = $D('noVNC_status');
             sb = $D('noVNC_status_bar');
-            cad = $D('sendCtrlAltDelButton');
-            rst = $D('sendResetButton');
-            skey = $D('softKeyMenu');
             switch (state) {
                 case 'failed':       level = "error";  break;
                 case 'fatal':        level = "error";  break;
@@ -103,12 +125,14 @@
                 default:             level = "warn";   break;
             }
 
-            if (state === "normal") {
-                cad.disabled = false; rst.disabled = false;
-                skey.disabled = false;
-            } else {
-                cad.disabled = true; rst.disabled = true;
-                skey.disabled = true;
+            var i;
+            for (i = 0; i < buttons.length; i++) {
+                var elem = $D(buttons[i].name);
+                if (state === "normal") {
+                    elem.disabled = false;
+                } else {
+                    elem.disabled = true;
+                }
             }
 
             if (typeof(msg) !== 'undefined') {
@@ -120,17 +144,12 @@
         window.onscriptsload = function () {
             var host, port, password, path, token, keymap;
 
-            $D('sendCtrlAltDelButton').style.display = "inline";
-            $D('sendCtrlAltDelButton').onclick = sendCtrlAltDel;
-            $D('sendResetButton').style.display = "inline";
-            $D('sendResetButton').onclick = sendReset;
-            $D('softKeyMenu').style.display = "inline";
-            $D('softKeyMenu').onclick = function() {
-                var e = $D('softKeyMenu');
-                var keyname = e.options[e.selectedIndex].value;
-                rfb.sendSoftKey(keyname);
-                return false;
-            };
+            var i;
+            for (i = 0; i < buttons.length; i++) {
+                var button = buttons[i];
+                $D(button.name).style.display = "inline";
+                $D(button.name).onclick = button.onclick;
+            }
 
             WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
             document.title = unescape(WebUtil.getQueryVar('title', 'noVNC'));
