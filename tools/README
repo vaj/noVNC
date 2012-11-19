@@ -1,0 +1,9 @@
+
+this directory contains scripts to generate keymaps/*.js files from
+qemu keymap files.
+
+usage example:
+	% cd this_directory
+	% sh ./qemu2novnc.sh /path/to/qemu
+	<... output snipped .. >
+	% cp *.js ../include/keymaps
