@@ -25,9 +25,10 @@
             <div id="noVNC_status_bar" class="noVNC_status_bar" style="margin-top: 0px;">
                 <table border=0 width="100%"><tr>
                     <td><div id="noVNC_status">Loading</div></td>
-                    <td width="600pt"><div id="noVNC_buttons">
+                    <td width="620pt"><div id="noVNC_buttons">
                       <span style="float: right">
-                           &nbsp;&nbsp; Hit:
+                        <input type=button value="Hit Key"
+                            id="softKeyButton">
                         <select name="softkey" id="softKeyMenu">
                           <option value="tilde">tilde (~)</option>
                           <option value="caret">caret (^) circum</option>
@@ -76,12 +77,8 @@
         var buttons = [
             {name: 'ctrlLockCheckBox', onclick: updateSoftKeyState},
             {name: 'altLockCheckBox', onclick: updateSoftKeyState},
-            {name: 'softKeyMenu', onclick: function() {
-                var e = $D('softKeyMenu');
-                var keyname = e.options[e.selectedIndex].value;
-                rfb.sendSoftKey(keyname);
-                return false;
-            }},
+            {name: 'softKeyMenu'},
+            {name: 'softKeyButton', onclick: sendSoftKey},
             {name: 'sendResetButton', onclick: sendReset},
             {name: 'sendCtrlAltDelButton', onclick: sendCtrlAltDel}
         ];
@@ -106,6 +103,12 @@
         }
         function sendReset() {
             rfb.clearKeymodifiers();
+            return false;
+        }
+        function sendSoftKey() {
+            var e = $D('softKeyMenu');
+            var keyname = e.options[e.selectedIndex].value;
+            rfb.sendSoftKey(keyname);
             return false;
         }
         function updateSoftKeyState() {
@@ -148,7 +151,9 @@
             for (i = 0; i < buttons.length; i++) {
                 var button = buttons[i];
                 $D(button.name).style.display = "inline";
-                $D(button.name).onclick = button.onclick;
+                if (button.onclick) {
+                    $D(button.name).onclick = button.onclick;
+                }
             }
 
             WebUtil.init_logging(WebUtil.getQueryVar('logging', 'warn'));
