@@ -73,6 +73,7 @@ start: function(callback) {
     UI.initSetting('encrypt', (window.location.protocol === "https:"));
     UI.initSetting('true_color', true);
     UI.initSetting('cursor', false);
+    UI.initSetting('remote_cursor', false);
     UI.initSetting('shared', true);
     UI.initSetting('view_only', false);
     UI.initSetting('connectTimeout', 5);
@@ -331,6 +332,7 @@ toggleSettingsPanel: function() {
             UI.updateSetting('cursor', false);
             $D('noVNC_cursor').disabled = true;
         }
+        UI.updateSetting('remote_cursor');
         UI.updateSetting('clip');
         UI.updateSetting('shared');
         UI.updateSetting('view_only');
@@ -376,6 +378,7 @@ settingsApply: function() {
     if (UI.rfb.get_display().get_cursor_uri()) {
         UI.saveSetting('cursor');
     }
+    UI.saveSetting('remote_cursor');
     UI.saveSetting('clip');
     UI.saveSetting('shared');
     UI.saveSetting('view_only');
@@ -498,6 +501,7 @@ updateVisualState: function() {
         UI.updateSetting('cursor', false);
         $D('noVNC_cursor').disabled = true;
     }
+    $D('noVNC_remote_cursor').disabled = connected;
     $D('noVNC_shared').disabled = connected;
     $D('noVNC_view_only').disabled = connected;
     $D('noVNC_connectTimeout').disabled = connected;
@@ -563,7 +567,7 @@ connect: function() {
 
     UI.rfb.set_encrypt(UI.getSetting('encrypt'));
     UI.rfb.set_true_color(UI.getSetting('true_color'));
-    UI.rfb.set_local_cursor(UI.getSetting('cursor'));
+    UI.rfb.set_local_cursor(UI.getSetting('cursor'), UI.getSetting('remote_cursor'));
     UI.rfb.set_shared(UI.getSetting('shared'));
     UI.rfb.set_view_only(UI.getSetting('view_only'));
     UI.rfb.set_connectTimeout(UI.getSetting('connectTimeout'));

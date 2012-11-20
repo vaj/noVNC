@@ -647,8 +647,12 @@ that.changeCursor = function(pixels, mask, hotx, hoty, w, h) {
     }
 };
 
-that.defaultCursor = function() {
-    conf.target.style.cursor = "default";
+that.defaultCursor = function(visible) {
+    if (!!visible) {
+        conf.target.style.cursor = "default";
+    } else {
+        conf.target.style.cursor = "url('/images/mouse_invisible.png'), url('/images/mouse_invisible.cur'), default";
+    }
 };
 
 return constructor();  // Return the public API interface

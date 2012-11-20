@@ -136,6 +136,7 @@ Util.conf_defaults(conf, that, defaults, [
     ['encrypt',            'rw', 'bool', false, 'Use TLS/SSL/wss encryption'],
     ['true_color',         'rw', 'bool', true,  'Request true color pixel data'],
     ['local_cursor',       'rw', 'bool', false, 'Request locally rendered cursor'],
+    ['remote_cursor',      'rw', 'bool', false, 'Hide the local cursor'],
     ['shared',             'rw', 'bool', true,  'Request shared mode'],
     ['view_only',          'rw', 'bool', false, 'Disable client mouse/keyboard'],
 
@@ -175,7 +176,7 @@ Util.conf_defaults(conf, that, defaults, [
 
 
 // Override/add some specific configuration getters/setters
-that.set_local_cursor = function(cursor) {
+that.set_local_cursor = function(cursor, remote_cursor) {
     if ((!cursor) || (cursor in {'0':1, 'no':1, 'false':1})) {
         conf.local_cursor = false;
     } else {
@@ -185,6 +186,8 @@ that.set_local_cursor = function(cursor) {
             Util.Warn("Browser does not support local cursor");
         }
     }
+    conf.remote_cursor = remote_cursor;
+    display.defaultCursor(!conf.remote_cursor);
 };
 
 // These are fake configuration getters
@@ -407,7 +410,7 @@ updateState = function(state, statusMsg) {
         if (display && display.get_context()) {
             keyboard.ungrab();
             mouse.ungrab();
-            display.defaultCursor();
+            display.defaultCursor(!conf.remote_cursor);
             if ((Util.get_logging() !== 'debug') ||
                 (state === 'loaded')) {
                 // Show noVNC logo on load and when disconnected if

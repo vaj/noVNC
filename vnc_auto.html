@@ -25,7 +25,7 @@
             <div id="noVNC_status_bar" class="noVNC_status_bar" style="margin-top: 0px;">
                 <table border=0 width="100%"><tr>
                     <td><div id="noVNC_status">Loading</div></td>
-                    <td width="620pt"><div id="noVNC_buttons">
+                    <td width="760pt"><div id="noVNC_buttons">
                       <span style="float: right">
                         <input type=button value="Hit Key"
                             id="softKeyButton">
@@ -39,6 +39,9 @@
                         </select>
                       </span>
                       <span style="float: right">
+                        <input type=checkbox value="visible"
+                            id="localCursorCheckBox">
+                        <label for="ctrlLockCheckBox">Hide Local Cursor</label>
                         <input type=checkbox value="ctrlKey"
                             id="ctrlLockCheckBox">
                         <label for="ctrlLockCheckBox">CtrlLock</label>
@@ -75,6 +78,7 @@
         var rfb;
 
         var buttons = [
+            {name: 'localCursorCheckBox', onclick: toggleLocalCursor},
             {name: 'ctrlLockCheckBox', onclick: updateSoftKeyState},
             {name: 'altLockCheckBox', onclick: updateSoftKeyState},
             {name: 'softKeyMenu'},
@@ -113,6 +117,11 @@
         }
         function updateSoftKeyState() {
             rfb.updateSoftKeyState(this.value, this.checked);
+            return true;
+        }
+        function toggleLocalCursor() {
+            var display = rfb.get_display();
+            rfb.set_local_cursor(!this.checked, this.checked);
             return true;
         }
         function updateState(rfb, state, oldstate, msg) {
@@ -187,6 +196,7 @@
                            'repeaterID':   WebUtil.getQueryVar('repeaterID', ''),
                            'true_color':   WebUtil.getQueryVar('true_color', true),
                            'local_cursor': WebUtil.getQueryVar('cursor', true),
+                           'remote_cursor': WebUtil.getQueryVar('remote_cursor', false),
                            'shared':       WebUtil.getQueryVar('shared', true),
                            'view_only':    WebUtil.getQueryVar('view_only', false),
                            'updateState':  updateState,
