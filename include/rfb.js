@@ -1948,7 +1948,8 @@ that.sendKey = function(code, down) {
 };
 
 that.sendSoftKey = function(keyname) {
-    var km = {shift: false, ctrl: false, alt: false, altgr: false};
+    var km =
+        {shiftKey: false, ctrlKey: false, altKey: false, altgrKey: false};
     var keysym = null;
     switch (keyname) {
         case 'backslash':    keysym = 92;   break;
