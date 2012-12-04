@@ -1951,7 +1951,6 @@ that.sendSoftKey = function(keyname) {
     var km =
         {shiftKey: false, ctrlKey: false, altKey: false, altgrKey: false};
     var keysym = null;
-    var type = 2;
     switch (keyname) {
         case 'backslash':    keysym = 92;   break;
         case 'caret':        keysym = 94;   break;
@@ -1961,12 +1960,14 @@ that.sendSoftKey = function(keyname) {
         case 'eurosign':     keysym = 8364; break;
         case 'win':          keysym = 0xFFEC; break;
         case 'context': // shift+F10
-            km.shiftKey = 1;
             keysym = 0xFFC7;
-            type = 1;
-            break;
+            km.shiftKey = 1;
+            keyPress(keysym, 1, km);
+            km.shiftKey = 0;
+            keyPress(keysym, 0, km);
+            return;
     }
-    if (keysym) keyPress(keysym, type, km);
+    if (keysym) keyPress(keysym, 2, km);
 };
 
 that.updateSoftKeyState = function(name, value) {
