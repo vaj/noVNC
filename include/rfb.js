@@ -965,11 +965,11 @@ init_msg = function() {
         name_length   = ws.rQshift32();
         fb_name = ws.rQshiftStr(name_length);
         
-        if (conf.true_color && fb_name === "Intel(r) AMT KVM")
-        {
-            Util.Warn("Intel AMT KVM only support 8/16 bit depths. Disabling true color");
-            conf.true_color = false;
-        }
+//        if (conf.true_color && fb_name === "Intel(r) AMT KVM")
+//        {
+//            Util.Warn("Intel AMT KVM only support 8/16 bit depths. Disabling true color");
+//            conf.true_color = false;
+//        }
 
         display.set_true_color(conf.true_color);
         conf.onFBResize(that, fb_width, fb_height);
