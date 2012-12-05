@@ -1961,9 +1961,9 @@ that.sendSoftKey = function(keyname) {
         case 'win':          keysym = 0xFFEC; break;
         case 'context': // shift+F10
             keysym = 0xFFC7;
-            km.shiftKey = 1;
+            km.shiftKey = true;
             keyPress(keysym, 1, km);
-            km.shiftKey = 0;
+            km.shiftKey = false;
             keyPress(keysym, 0, km);
             return;
     }
