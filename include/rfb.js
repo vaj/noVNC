@@ -1963,6 +1963,13 @@ that.sendSoftKey = function(keyname) {
         case 'print':        keysym = 0xFF61; break;
         case 'pause':        keysym = 0xFF13; break;
         case 'capslock':     keysym = 0xFFE5; break;
+        case 'backspace':    keysym = 0xFF08; break;
+        case 'insert':       keysym = 0xFF63; break;
+        case 'delete':       keysym = 0xFFFF; break;
+        case 'home':         keysym = 0xFF50; break;
+        case 'end':          keysym = 0xFF57; break;
+        case 'pageup':       keysym = 0xFF55; break;
+        case 'pagedown':     keysym = 0xFF56; break;
         case 'context': // shift+F10
             keysym = 0xFFC7;
             km.shiftKey = true;
