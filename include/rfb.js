@@ -1970,6 +1970,10 @@ that.sendSoftKey = function(keyname) {
         case 'end':          keysym = 0xFF57; break;
         case 'pageup':       keysym = 0xFF55; break;
         case 'pagedown':     keysym = 0xFF56; break;
+        case 'eisu':         keysym = 0xFF30; break;
+        case 'henkan':       keysym = 0xFF23; break;
+        case 'muhenkan':     keysym = 0xFF22; break;
+        case 'zenkakuhankaku': keysym = 0xFF2A; break;
         case 'context': // shift+F10
             keysym = 0xFFC7;
             km.shiftKey = true;
