@@ -1959,6 +1959,10 @@ that.sendSoftKey = function(keyname) {
         case 'yen':          keysym = 165;  break;
         case 'eurosign':     keysym = 8364; break;
         case 'win':          keysym = 0xFFEC; break;
+        case 'menu':         keysym = 0xFF67; break;
+        case 'print':        keysym = 0xFF61; break;
+        case 'pause':        keysym = 0xFF13; break;
+        case 'capslock':     keysym = 0xFFE5; break;
         case 'context': // shift+F10
             keysym = 0xFFC7;
             km.shiftKey = true;
