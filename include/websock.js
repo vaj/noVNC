@@ -65,6 +65,9 @@ var api = {},         // Public API
         'error'   : function() {}
     },
 
+    proxyHost = null,
+    proxyPort = 0,
+
     test_mode = false;
 
 
@@ -256,6 +259,35 @@ function recv_message(e) {
     //Util.Debug("<< recv_message");
 }
 
+function getProxy()
+{
+    // Get the proxy server setting from the Windows registry, which requires
+    // ActiveX enabled.
+
+    if (Websock_native || !Util.Engine.trident) return;
+
+    var regpath = "HKCU\\Software\\Microsoft\\Windows\\CurrentVersion\\Internet Settings\\";
+    var wsh, proxy = null, enable;
+
+    try {
+        wsh = new ActiveXObject("WScript.Shell");
+        enable = wsh.RegRead(regpath + "ProxyEnable");
+        if (enable == "1") {
+            proxy = wsh.RegRead(regpath + "ProxyServer");
+        }
+    } catch (e) {
+        proxy = null;
+        Util.Warn("ActiveX is disabled. If you want to use a webproxy, you need to enable it.");
+    }
+
+    if (!!proxy) {
+        var ar = proxy.split(":");
+        proxyHost = ar[0];
+        proxyPort = parseInt(ar[1]);
+        Util.Info("Web proxy is set: " + proxyHost + ":" + proxyPort);
+    }
+}
+
 
 // Set event handlers
 function on(evt, handler) { 
@@ -324,13 +356,18 @@ function init(protocols) {
     return protocols;
 }
 
-function open(uri, protocols) {
+function open(uri, protocols, retry) {
     protocols = init(protocols);
 
     if (test_mode) {
         websocket = {};
     } else {
-        websocket = new WebSocket(uri, protocols);
+        if (retry) getProxy();
+        if (!proxyHost) {
+           websocket = new WebSocket(uri, protocols);
+        } else {
+           websocket = new WebSocket(uri, protocols, proxyHost, proxyPort);
+        }
         if (protocols.indexOf('binary') >= 0) {
             websocket.binaryType = 'arraybuffer';
         }
@@ -361,7 +398,7 @@ function open(uri, protocols) {
     };
 }
 
-function close() {
+function close(force) {
     if (websocket) {
         if ((websocket.readyState === WebSocket.OPEN) ||
             (websocket.readyState === WebSocket.CONNECTING)) {
@@ -369,6 +406,13 @@ function close() {
             websocket.close();
         }
         websocket.onmessage = function (e) { return; };
+        if (typeof(force) !== 'undefined') {
+            eventHandlers.message = function() {};
+            eventHandlers.open = function() {};
+            eventHandlers.close = function() {};
+            eventHandlers.error = function() {};
+            Util.Debug("WebSocket force close");
+        }
     }
 }
 

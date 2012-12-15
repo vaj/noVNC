@@ -79,6 +79,8 @@ var that           = {},  // Public API methods
     disconnTimer   = null,   // disconnection timer
     msgTimer       = null,   // queued handle_message timer
 
+    is_retry       = false,
+
     // Frame buffer update state
     FBU            = {
         rects          : 0,
@@ -230,6 +232,33 @@ function constructor() {
 
     rmode = display.get_render_mode();
 
+    create_socket();
+
+    init_vars();
+
+    /* Check web-socket-js if no builtin WebSocket support */
+    if (Websock_native) {
+        Util.Info("Using native WebSockets");
+        updateState('loaded', 'noVNC ready: native WebSockets, ' + rmode);
+    } else {
+        Util.Warn("Using web-socket-js bridge. Flash version: " +
+                  Util.Flash.version);
+        if ((! Util.Flash) ||
+            (Util.Flash.version < 9)) {
+            updateState('fatal', "WebSockets or <a href='http://get.adobe.com/flashplayer'>Adobe Flash<\/a> is required");
+        } else if (document.location.href.substr(0, 7) === "file://") {
+            updateState('fatal',
+                    "'file://' URL is incompatible with Adobe Flash");
+        } else {
+            updateState('loaded', 'noVNC ready: WebSockets emulation, ' + rmode);
+        }
+    }
+
+    Util.Debug("<< RFB.constructor");
+    return that;  // Return the public API interface
+}
+
+function create_socket() {
     ws = new Websock();
     ws.on('message', handle_message);
     ws.on('open', function() {
@@ -263,30 +292,6 @@ function constructor() {
         Util.Warn("WebSocket on-error event");
         //fail("WebSock reported an error");
     });
-
-
-    init_vars();
-
-    /* Check web-socket-js if no builtin WebSocket support */
-    if (Websock_native) {
-        Util.Info("Using native WebSockets");
-        updateState('loaded', 'noVNC ready: native WebSockets, ' + rmode);
-    } else {
-        Util.Warn("Using web-socket-js bridge. Flash version: " +
-                  Util.Flash.version);
-        if ((! Util.Flash) ||
-            (Util.Flash.version < 9)) {
-            updateState('fatal', "WebSockets or <a href='http://get.adobe.com/flashplayer'>Adobe Flash<\/a> is required");
-        } else if (document.location.href.substr(0, 7) === "file://") {
-            updateState('fatal',
-                    "'file://' URL is incompatible with Adobe Flash");
-        } else {
-            updateState('loaded', 'noVNC ready: WebSockets emulation, ' + rmode);
-        }
-    }
-
-    Util.Debug("<< RFB.constructor");
-    return that;  // Return the public API interface
 }
 
 function connect() {
@@ -305,7 +310,7 @@ function connect() {
     }
     Util.Info("connecting to " + uri);
     // TODO: make protocols a configurable
-    ws.open(uri, ['binary', 'base64']);
+    ws.open(uri, ['binary', 'base64'], is_retry);
 
     Util.Debug("<< RFB.connect");
 }
@@ -491,6 +496,23 @@ updateState = function(state, statusMsg) {
 
 
     case 'failed':
+        if (oldstate === 'connect' && !is_retry
+                && !Websock_native && Util.Engine.trident) {
+            Util.Info("Retry to connect.");
+            is_retry = true;
+            rfb_state = oldstate;
+            ws.close(true);
+            create_socket();
+
+            connTimer = setTimeout(function () {
+                    fail("Connect timeout (retry)");
+                }, conf.connectTimeout * 2 * 1000);
+
+            init_vars();
+            connect();
+            break;
+	}
+
         if (oldstate === 'disconnected') {
             Util.Error("Invalid transition from 'disconnected' to 'failed'");
         }
