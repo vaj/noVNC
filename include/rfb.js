@@ -500,12 +500,13 @@ updateState = function(state, statusMsg) {
                 && !Websock_native && Util.Engine.trident) {
             Util.Info("Retry to connect.");
             is_retry = true;
-            rfb_state = oldstate;
+            state = rfb_state = oldstate;
+            statusMsg = "Retry to connect: Please enable ActiveX";
             ws.close(true);
             create_socket();
 
             connTimer = setTimeout(function () {
-                    fail("Connect timeout (retry)");
+                    fail("Connect timeout:  ActiveX may be disabled.");
                 }, conf.connectTimeout * 2 * 1000);
 
             init_vars();
