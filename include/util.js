@@ -231,7 +231,7 @@ Util.load_scripts = function(files, callback) {
         console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
             console.log("script " + this.src + " event.type " + e.type +
-		" readyState " + readyState);
+		" readyState " + this.readyState);
 	    if (!document.documentMode) {
 		console.log("documentMode undefined");
             } else {
