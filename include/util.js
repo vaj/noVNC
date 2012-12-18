@@ -230,6 +230,13 @@ Util.load_scripts = function(files, callback) {
             script.callback = callback;
         console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
+            console.log("script " + this.src + " event.type " + e.type +
+		" readyState " + readyState);
+	    if (!document.documentMode) {
+		console.log("documentMode undefined");
+            } else {
+		console.log("documentMode " + document.documentMode);
+	    }
             if (!this.onreadystatechange)
                 return;
             while (ls.length > 0 && (ls[0].readyState === 'loaded' ||
@@ -267,10 +274,12 @@ Util.load_scripts = function(files, callback) {
             // For IE <10 wait until readyState is 'loaded' before
             // appending it which will trigger execution
             // http://wiki.whatwg.org/wiki/Dynamic_Script_Execution_Order
+	    console.log("using IE <10 method");
             ls.push(script);
         } else {
             // For IE >=10, webkit and firefox set async=false and append now
             // https://developer.mozilla.org/en-US/docs/HTML/Element/script
+	    console.log("using async=false method");
             script.async = false;
             head.appendChild(script);
         }
