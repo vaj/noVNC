@@ -228,7 +228,7 @@ Util.load_scripts = function(files, callback) {
         script.src = Util.get_include_uri() + files[f];
         if (!!callback)
             script.callback = callback;
-        //console.log("loading script: " + script.src);
+        console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
             if (!this.onreadystatechange)
                 return;
@@ -236,7 +236,7 @@ Util.load_scripts = function(files, callback) {
                                      ls[0].readyState === 'complete')) {
                 // For IE, append the script to trigger execution
                 var s = ls.shift();
-                //console.log("loaded script: " + s.src);
+                console.log("loaded script: " + s.src);
                 head.appendChild(s);
             }
             if (!this.readyState ||
@@ -244,7 +244,7 @@ Util.load_scripts = function(files, callback) {
                 this.readyState === 'complete') {
                 if (ps.indexOf(this) >= 0) {
                     this.onload = this.onreadystatechange = null;
-                    //console.log("completed script: " + this.src);
+                    console.log("completed script: " + this.src);
                     ps.splice(ps.indexOf(this), 1);
                     if (!!this.callback)
                         this.callback();
