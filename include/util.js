@@ -259,13 +259,17 @@ Util.load_scripts = function(files, callback) {
             }
         };
         // In-order script execution tricks
-        if (Util.Engine.trident) {
-            // For IE wait until readyState is 'loaded' before
+        // http://msdn.microsoft.com/en-us/library/cc817582.aspx
+        if (Util.Engine.trident &&
+           (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})")).
+           exec(navigator.userAgent) != null) &&
+           parseFloat(RegExp.$1) < 10) {
+            // For IE <10 wait until readyState is 'loaded' before
             // appending it which will trigger execution
             // http://wiki.whatwg.org/wiki/Dynamic_Script_Execution_Order
             ls.push(script);
         } else {
-            // For webkit and firefox set async=false and append now
+            // For IE >=10, webkit and firefox set async=false and append now
             // https://developer.mozilla.org/en-US/docs/HTML/Element/script
             script.async = false;
             head.appendChild(script);
