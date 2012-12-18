@@ -262,7 +262,7 @@ Util.load_scripts = function(files, callback) {
         // http://msdn.microsoft.com/en-us/library/cc817582.aspx
         if (Util.Engine.trident &&
            (new RegExp("MSIE ([0-9]{1,}[\.0-9]{0,})")).
-           exec(navigator.userAgent) != null) &&
+           exec(navigator.userAgent) != null &&
            parseFloat(RegExp.$1) < 10) {
             // For IE <10 wait until readyState is 'loaded' before
             // appending it which will trigger execution
