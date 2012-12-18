@@ -234,14 +234,14 @@ Util.load_scripts = function(files, callback) {
                 return;
             while (ls.length > 0 && (ls[0].readyState === 'loaded' ||
                                      ls[0].readyState === 'complete')) {
-                // For IE, append the script to trigger execution
+                // For IE <10, append the script to trigger execution
                 var s = ls.shift();
                 console.log("loaded script: " + s.src);
                 head.appendChild(s);
             }
+	    // https://github.com/headjs/headjs/blob/master/src/load.js#L491
             if (!this.readyState ||
-                (Util.Engine.presto && this.readyState === 'loaded') ||
-                this.readyState === 'complete') {
+		e.type === 'load' || (/loaded|complete/.test(this.readyState) && (!document.documentMode || document.documentMode < 9))) {
                 if (ps.indexOf(this) >= 0) {
                     this.onload = this.onreadystatechange = null;
                     console.log("completed script: " + this.src);
