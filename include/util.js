@@ -240,7 +240,7 @@ Util.load_scripts = function(files, callback) {
                 head.appendChild(s);
             }
             if (!this.readyState ||
-                (Util.Engine.presto && this.readyState === 'loaded') ||
+                ((Util.Engine.presto || Util.Engine.trident) && this.readyState === 'loaded') ||
                 this.readyState === 'complete') {
                 if (ps.indexOf(this) >= 0) {
                     this.onload = this.onreadystatechange = null;
