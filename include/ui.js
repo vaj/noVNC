@@ -12,9 +12,11 @@
 
 // Load supporting scripts
 window.onscriptsload = function () { UI.load(); };
+/*
 Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
                    "input.js", "display.js", "jsunzip.js", "rfb.js",
                    "keymap.js"]);
+*/
 
 var UI = {
 

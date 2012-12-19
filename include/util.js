@@ -219,6 +219,16 @@ Util.get_include_uri = function() {
 }
 Util._loading_scripts = [];
 Util._pending_scripts = [];
+Util._onload = false;
+window.onload = function () {
+    var ps = Util._pending_scripts;
+    Util._onload = true;
+    if (ps.length === 0 && window.onscriptsload) {
+        var onload = window.onscriptsload;
+        window.onscriptsload = null;
+        onload();
+    }
+};
 Util.load_scripts = function(files, callback) {
     var head = document.getElementsByTagName('head')[0], script,
         ls = Util._loading_scripts, ps = Util._pending_scripts;
@@ -230,6 +240,7 @@ Util.load_scripts = function(files, callback) {
             script.callback = callback;
         //console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
+            e = (e ? e : window.event);
             if (!this.onreadystatechange)
                 return;
             while (ls.length > 0 && (ls[0].readyState === 'loaded' ||
@@ -250,7 +261,7 @@ Util.load_scripts = function(files, callback) {
                         this.callback();
 
                     // Call window.onscriptsload after last script loads
-                    if (ps.length === 0 && window.onscriptsload) {
+                    if (ps.length === 0 && window.onscriptsload && Util._onload) {
                         var onload = window.onscriptsload;
                         window.onscriptsload = null;
                         onload();
@@ -369,6 +380,14 @@ if (Util.Engine.webkit) {
             v = (navigator.userAgent.match(re) || ['', v])[1];
             return parseFloat(v, 10);
         })(Util.Engine.webkit);
+}
+if (Util.Engine.trident) {
+    Util.Engine.trident = (function(v) {
+        var re = new RegExp('MSIE ([0-9]*).');
+        var navi = navigator.userAgent;
+        v = (navigator.userAgent.match(re) || ['', v])[1];
+        return parseFloat(v, 10);
+    })(Util.Engine.trident);
 }
 
 Util.Flash = (function(){

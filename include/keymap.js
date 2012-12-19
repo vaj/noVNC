@@ -15,6 +15,18 @@ Kmap.loadKeymap = function (kb) {
     if (!kb || kb === 'default' || typeof Kmap.keymaps[kb] !== 'undefined') {
         return;
     }
+    if (kb === 'ja' || kb === 'en-us' || kb === 'en-gb' || kb === 'de') {
+       	// Statically loaded
+        var km = kb.replace(/[\-\+]/, "_");
+        km = "Kmap.keymaps['" + kb + "'] = keymap_" + km;
+        try {
+            eval(km);
+        } catch (e) {
+            delete Kmap.keymaps[kb];
+        }
+        return;
+    }
+
     Kmap.keymaps[kb] = null;		// Now loading
     Util.load_scripts(["keymaps/" + kb + ".js"],
         function () {
