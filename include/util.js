@@ -240,7 +240,6 @@ Util.load_scripts = function(files, callback) {
             script.callback = callback;
         //console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
-            e = (e ? e : window.event);
             if (!this.onreadystatechange)
                 return;
             while (ls.length > 0 && (ls[0].readyState === 'loaded' ||
@@ -380,14 +379,6 @@ if (Util.Engine.webkit) {
             v = (navigator.userAgent.match(re) || ['', v])[1];
             return parseFloat(v, 10);
         })(Util.Engine.webkit);
-}
-if (Util.Engine.trident) {
-    Util.Engine.trident = (function(v) {
-        var re = new RegExp('MSIE ([0-9]*).');
-        var navi = navigator.userAgent;
-        v = (navigator.userAgent.match(re) || ['', v])[1];
-        return parseFloat(v, 10);
-    })(Util.Engine.trident);
 }
 
 Util.Flash = (function(){

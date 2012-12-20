@@ -19,19 +19,10 @@
         -->
         <!--
         <script src="include/util.js"></script>
-        <script src="include/webutil.js"></script>
-        <script src="include/base64.js"></script>
-        <script src="include/websock.js"></script>
-        <script src="include/des.js"></script>
-        <script src="include/input.js"></script>
-        <script src="include/display.js"></script>
-        <script src="include/jsunzip.js"></script>
-        <script src="include/rfb.js"></script>
-        <script src="include/keymap.js"></script>
-        <script src="include/keymaps/en-us.js"></script>
-        <script src="include/keymaps/ja.js"></script>
-        <script src="include/keymaps/de.js"></script>
-        <script src="include/keymaps/en-gb.js"></script>
+        -->
+        <!--
+        Load the scripts statically or IE10 may fail to download them
+        when using https.
         -->
 
 <script type='text/javascript'>
@@ -279,7 +270,6 @@ Util.load_scripts = function(files, callback) {
             script.callback = callback;
         //console.log("loading script: " + script.src);
         script.onload = script.onreadystatechange = function (e) {
-            e = (e ? e : window.event);
             if (!this.onreadystatechange)
                 return;
             while (ls.length > 0 && (ls[0].readyState === 'loaded' ||
@@ -419,14 +409,6 @@ if (Util.Engine.webkit) {
             v = (navigator.userAgent.match(re) || ['', v])[1];
             return parseFloat(v, 10);
         })(Util.Engine.webkit);
-}
-if (Util.Engine.trident) {
-    Util.Engine.trident = (function(v) {
-        var re = new RegExp('MSIE ([0-9]*).');
-        var navi = navigator.userAgent;
-        v = (navigator.userAgent.match(re) || ['', v])[1];
-        return parseFloat(v, 10);
-    })(Util.Engine.trident);
 }
 
 Util.Flash = (function(){
@@ -814,7 +796,6 @@ decode: function (data, offset) {
 // To enable WebSocket emulator debug:
 //window.WEB_SOCKET_DEBUG=1;
 
-//XXXX call it later
 if (window.WebSocket && !window.WEB_SOCKET_FORCE_FLASH) {
     Websock_native = true;
 } else if (window.MozWebSocket && !window.WEB_SOCKET_FORCE_FLASH) {
@@ -7053,58 +7034,6 @@ return constructor();  // Return the public API interface
 }  // End of RFB()
 </script>
 <script type='text/javascript'>
-//==== keymap.js =====
-
-/*
- * noVNC: HTML5 VNC client
- * Copyright (C) 2012 Hirokazu Takahashi
- * Licensed under MPL 2.0 or any later version (see LICENSE.txt)
- */
-
-"use strict";
-/*jslint white: false, browser: true, bitwise: false, plusplus: false */
-/*global Util*/
-
-var Kmap = {};
-Kmap.keymaps = {};
-
-Kmap.loadKeymap = function (kb) {
-    if (!kb || kb === 'default' || typeof Kmap.keymaps[kb] !== 'undefined') {
-        return;
-    }
-    if (kb === 'ja' || kb === 'en-us' || kb === 'en-gb' || kb === 'de') {
-       	// Statically loaded
-        var km = kb.replace(/[\-\+]/, "_");
-        km = "Kmap.keymaps['" + kb + "'] = keymap_" + km;
-        try {
-            eval(km);
-        } catch (e) {
-            delete Kmap.keymaps[kb];
-        }
-        return;
-    }
-
-    Kmap.keymaps[kb] = null;		// Now loading
-    Util.load_scripts(["keymaps/" + kb + ".js"],
-        function () {
-            var components = this.src.split("/"),
-                kb = components[components.length - 1].split(".")[0],
-                km = kb.replace(/[\-\+]/, "_");
-            km = "Kmap.keymaps['" + kb + "'] = keymap_" + km;
-            try {
-                eval(km);
-            } catch (e) {
-                delete Kmap.keymaps[kb];
-            }
-        }
-    );
-};
-
-Kmap.getKeymap = function (kb) {
-    return Kmap.keymaps[kb];
-};
-</script>
-<script type='text/javascript'>
 //==== keymaps/en-us.js =====
 
 keymap_en_us = {
@@ -7871,6 +7800,50 @@ keymap_en_gb = {
 };
 
 </script>
+<script type='text/javascript'>
+//==== keymap.js =====
+
+/*
+ * noVNC: HTML5 VNC client
+ * Copyright (C) 2012 Hirokazu Takahashi
+ * Licensed under MPL 2.0 or any later version (see LICENSE.txt)
+ */
+
+"use strict";
+/*jslint white: false, browser: true, bitwise: false, plusplus: false */
+/*global Util*/
+
+var Kmap = {};
+Kmap.keymaps = {};
+Kmap.keymaps['ja'] = keymap_ja;
+Kmap.keymaps['en-us'] = keymap_en_us;
+Kmap.keymaps['en-gb'] = keymap_en_gb;
+Kmap.keymaps['de'] = keymap_de;
+
+Kmap.loadKeymap = function (kb) {
+    if (!kb || kb === 'default' || typeof Kmap.keymaps[kb] !== 'undefined') {
+        return;
+    }
+    Kmap.keymaps[kb] = null;		// Now loading
+    Util.load_scripts(["keymaps/" + kb + ".js"],
+        function () {
+            var components = this.src.split("/"),
+                kb = components[components.length - 1].split(".")[0],
+                km = kb.replace(/[\-\+]/, "_");
+            km = "Kmap.keymaps['" + kb + "'] = keymap_" + km;
+            try {
+                eval(km);
+            } catch (e) {
+                delete Kmap.keymaps[kb];
+            }
+        }
+    );
+};
+
+Kmap.getKeymap = function (kb) {
+    return Kmap.keymaps[kb];
+};
+</script>
 
     </head>
 
@@ -7942,11 +7915,11 @@ keymap_en_gb = {
         "use strict";
 
         // Load supporting scripts
-/*
-        Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
-                           "input.js", "display.js", "jsunzip.js", "rfb.js",
-                           "keymap.js"]);
-*/
+        // Load the scripts statically or IE10 may fail to download them
+        // when using https.
+//        Util.load_scripts(["webutil.js", "base64.js", "websock.js", "des.js",
+//                           "input.js", "display.js", "jsunzip.js", "rfb.js",
+//                           "keymap.js"]);
 
         var rfb;
 

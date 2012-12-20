@@ -10,23 +10,15 @@
 
 var Kmap = {};
 Kmap.keymaps = {};
+Kmap.keymaps['ja'] = keymap_ja;
+Kmap.keymaps['en-us'] = keymap_en_us;
+Kmap.keymaps['en-gb'] = keymap_en_gb;
+Kmap.keymaps['de'] = keymap_de;
 
 Kmap.loadKeymap = function (kb) {
     if (!kb || kb === 'default' || typeof Kmap.keymaps[kb] !== 'undefined') {
         return;
     }
-    if (kb === 'ja' || kb === 'en-us' || kb === 'en-gb' || kb === 'de') {
-       	// Statically loaded
-        var km = kb.replace(/[\-\+]/, "_");
-        km = "Kmap.keymaps['" + kb + "'] = keymap_" + km;
-        try {
-            eval(km);
-        } catch (e) {
-            delete Kmap.keymaps[kb];
-        }
-        return;
-    }
-
     Kmap.keymaps[kb] = null;		// Now loading
     Util.load_scripts(["keymaps/" + kb + ".js"],
         function () {

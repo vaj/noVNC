@@ -25,7 +25,6 @@
 // To enable WebSocket emulator debug:
 //window.WEB_SOCKET_DEBUG=1;
 
-//XXXX call it later
 if (window.WebSocket && !window.WEB_SOCKET_FORCE_FLASH) {
     Websock_native = true;
 } else if (window.MozWebSocket && !window.WEB_SOCKET_FORCE_FLASH) {
