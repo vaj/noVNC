@@ -520,6 +520,14 @@ function allKeysUp() {
             conf.onKeyPress(keysym, 0, keyModifiers);
         }
     }
+    // Send modifiers keyup events just in case. Don't ever leave the
+    // modifiers down.
+    if (conf.onKeyPress) {
+        conf.onKeyPress(0xFE03, 0, keyModifiers);  // AltGr
+        conf.onKeyPress(0xFFE9, 0, keyModifiers);  // Alt
+        conf.onKeyPress(0xFFE3, 0, keyModifiers);  // Control
+        conf.onKeyPress(0xFFE1, 0, keyModifiers);  // Shift
+    }
     Util.Debug("<< Keyboard.allKeysUp");
     return;
 }
@@ -556,8 +564,6 @@ that.ungrab = function() {
 
     //Util.Debug(">> Keyboard.ungrab");
 };
-
-that.refreshAllKeys = allKeysUp;
 
 return that;  // Return the public API interface
 

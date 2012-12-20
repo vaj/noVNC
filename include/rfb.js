@@ -630,6 +630,7 @@ keyPress = function(keysym, down, km) {
     var arr = [];
     var keymap = getKeymap();
 
+    if (rfb_state !== "normal") { return; }
     if (conf.view_only) { return; } // View only, skip keyboard events
 
     // Remap the modifiers with apppropriate ones depending on the
@@ -643,24 +644,20 @@ keyPress = function(keysym, down, km) {
     //  2. this is a repeated keydown event for a modifer
     var ctrlKey = km.ctrlKey || softKeyState.ctrlKey;
     var altKey = km.altKey || softKeyState.altKey;
-    if (remote_status.ctrl !== ctrlKey
-            || (keysym === 0xFFE3 && remote_status.ctrl && ctrlKey)) {
-        arr = arr.concat(keyEvent(0xFFE3, ctrlKey));		// CTRL
+    if (remote_status.ctrl !== ctrlKey || keysym === 0xFFE3) {
+        arr = arr.concat(keyEvent(0xFFE3, ctrlKey));            // CTRL
         remote_status.ctrl = ctrlKey;
     }
-    if (remote_status.alt !== altKey
-            || (keysym === 0xFFE9 && remote_status.alt && altKey)) {
-        arr = arr.concat(keyEvent(0xFFE9, altKey));		// ALT
+    if (remote_status.alt !== altKey || keysym === 0xFFE9) {
+        arr = arr.concat(keyEvent(0xFFE9, altKey));             // ALT
         remote_status.alt = altKey;
     }
-    if (remote_status.altgr !== km.altgrKey
-            || (keysym === 0xFE03 && remote_status.altgr && km.altgrKey)) {
-        arr = arr.concat(keyEvent(0xFE03, km.altgrKey));	// ALTGR
+    if (remote_status.altgr !== km.altgrKey || keysym === 0xFE03) {
+        arr = arr.concat(keyEvent(0xFE03, km.altgrKey));        // ALTGR
         remote_status.altgr = km.altgrKey;
     }
-    if (remote_status.shift !== km.shiftKey
-            || (keysym === 0xFFE1 && remote_status.shift && km.shiftKey)) {
-        arr = arr.concat(keyEvent(0xFFE1, km.shiftKey));	// SHIFT
+    if (remote_status.shift !== km.shiftKey || keysym === 0xFFE1) {
+        arr = arr.concat(keyEvent(0xFFE1, km.shiftKey));        // SHIFT
         remote_status.shift = km.shiftKey;
     }
 
@@ -1941,7 +1938,6 @@ that.sendCtrlAltDel = function() {
 
 that.clearKeymodifiers = function() {
     if (rfb_state !== "normal") { return false; }
-    that.get_keyboard().refreshAllKeys();
     Util.Info("Sending Ctrl/Alt/Shift/AltGr Keyup events");
     var arr = [];
     arr = arr.concat(keyEvent(0xFE03, 0)); // AltGr
